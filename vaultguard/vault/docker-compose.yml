@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  tokenizer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
+    depends_on:
+      - redis
+      # - opa
+    volumes:
+      - .:/app
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  # opa:
+  #   image: openpolicyagent/opa:latest
+  #   ports:
+  #     - "8181:8181"
+  #   command: ["run", "--server", "--log-level", "debug", "/policies"]
+  #   volumes:
+  #     - ./opa/policies:/policies
