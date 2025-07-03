@@ -7,7 +7,6 @@ import consentRoutes from './routes/consent.routes';
 import { startConsentExpirationJob } from './jobs/expireConsents.job';
 import { logger } from './utils/logger';
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -15,13 +14,11 @@ const PORT = process.env.PORT || 4000;
 
 // Global middlewares
 app.use(helmet());               // Security headers
-app.use(cors());                 // Cross-Origin Resource Sharing
-app.use(express.json());         // Parse JSON bodies
+app.use(cors());                
+app.use(express.json());         
 
-// Mount routes
 app.use('/api', consentRoutes);
 
-// Health check endpoint
 app.get('/', (_req, res) => {
   res.send('✅ Consent Service is running');
 });
