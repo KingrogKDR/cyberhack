@@ -14,11 +14,11 @@ export const validateRequest = (schema: AnyZodObject) => {
           message: 'Validation Error',
           errors: error.errors,
         });
-        return; // 🔁 add this!
+        return; 
       }
 
       res.status(500).json({ message: 'Internal Server Error' });
-      return; // 🔁 and this!
+      return; 
     }
   };
 };
