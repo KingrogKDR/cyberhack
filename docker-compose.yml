@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  tokenizer:
+    build:
+      context: ./vault
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
+    depends_on:
+      - redis
+      - elasticsearch
+      - kibana
+      # - opa
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--notify-keyspace-events", "Ex"]
+
+  # opa:
+  #   image: openpolicyagent/opa:latest
+  #   ports:
+  #     - "8181:8181"
+  #   command: ["run", "--server", "--log-level", "debug", "/policies"]
+  #   volumes:
+  #     - ./opa/policies:/policies
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.2
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+volumes:
+  esdata:
