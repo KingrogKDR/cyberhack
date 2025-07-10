@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth.middleware";
 import {
+  checkConsent,
   createConsent,
   getUserConsents,
   revokeConsent,
-  checkConsent,
-} from '../services/consent.service';
-import { CreateConsentInput } from '../utils/validator';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { logger } from '../utils/logger';
+} from "../services/consent.service";
+import { logger } from "../utils/logger";
+import { CreateConsentInput } from "../utils/validator";
 
 // POST /consent
 export const createConsentHandler = async (
@@ -20,11 +20,10 @@ export const createConsentHandler = async (
     logger.info(`Consent created for user ${body.userId}`);
     res.status(201).json({ consent });
   } catch (error) {
-    logger.error('Error creating consent: ' + error);
-    res.status(500).json({ message: 'Failed to create consent' });
+    logger.error("Error creating consent: " + error);
+    res.status(500).json({ message: "Failed to create consent" });
   }
 };
-
 
 // GET /consent/:userId
 export const getUserConsentsHandler = async (
@@ -36,8 +35,8 @@ export const getUserConsentsHandler = async (
     const consents = await getUserConsents(userId);
     res.status(200).json({ consents });
   } catch (error) {
-    logger.error('Error fetching user consents: ' + error);
-    res.status(500).json({ message: 'Failed to fetch consents' });
+    logger.error("Error fetching user consents: " + error);
+    res.status(500).json({ message: "Failed to fetch consents" });
   }
 };
 
@@ -52,8 +51,8 @@ export const revokeConsentHandler = async (
     logger.info(`Consent ${id} revoked`);
     res.status(200).json({ consent });
   } catch (error) {
-    logger.error('Error revoking consent: ' + error);
-    res.status(500).json({ message: 'Failed to revoke consent' });
+    logger.error("Error revoking consent: " + error);
+    res.status(500).json({ message: "Failed to revoke consent" });
   }
 };
 
@@ -67,7 +66,7 @@ export const checkConsentHandler = async (
     const { userId, appId, field } = req.query;
 
     if (!userId || !appId || !field) {
-      res.status(400).json({ message: 'Missing query parameters' });
+      res.status(400).json({ message: "Missing query parameters" });
       return;
     }
 
@@ -79,7 +78,7 @@ export const checkConsentHandler = async (
 
     res.status(200).json({ allowed });
   } catch (error) {
-    logger.error('Error checking consent: ' + error);
-    res.status(500).json({ message: 'Failed to check consent' });
+    logger.error("Error checking consent: " + error);
+    res.status(500).json({ message: "Failed to check consent" });
   }
 };

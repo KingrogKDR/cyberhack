@@ -13,7 +13,35 @@ services:
       - redis
       - elasticsearch
       - kibana
-      # - opa
+      - access-service
+
+  access-service:
+    build:
+      context: ./AccessService
+    ports:
+      - "3004:5000"
+    restart: unless-stopped
+    depends_on:
+      - policy-service
+      - consent-service
+
+  consent-service:
+    build:
+      context: ./ConsentService
+    ports:
+      - "3005:4000"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  policy-service:
+    image: openpolicyagent/opa:latest
+    volumes:
+      - ./PolicyEngine:/policy
+    command: "run --server --set=decision_logs.console=true /policy/data-access.rego"
+    ports:
+      - "8181:8181"
+    restart: unless-stopped
 
   redis:
     image: redis:7
@@ -21,13 +49,17 @@ services:
       - "6379:6379"
     command: ["redis-server", "--notify-keyspace-events", "Ex"]
 
-  # opa:
-  #   image: openpolicyagent/opa:latest
-  #   ports:
-  #     - "8181:8181"
-  #   command: ["run", "--server", "--log-level", "debug", "/policies"]
-  #   volumes:
-  #     - ./opa/policies:/policies
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: consentdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.2
@@ -48,3 +80,4 @@ services:
 
 volumes:
   esdata:
+  pgdata:

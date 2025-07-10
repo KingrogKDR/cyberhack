@@ -8,7 +8,7 @@ import redis from "../utils/redis.js";
 const router = Router();
 
 router.post("/tokenize", async (req, res) => {
-  const { requestedData, userId } = req.body;
+  const { requestedData, userId, appId } = req.body;
   const tokens = {};
 
   for (const field in requestedData) {
@@ -33,7 +33,8 @@ router.post("/tokenize", async (req, res) => {
       key,
       iv,
       expiresAt,
-      mask
+      mask,
+      appId
     };
 
     await redis.setEx(`vault:${token}`, ttl * 60, JSON.stringify(payload));
@@ -42,6 +43,7 @@ router.post("/tokenize", async (req, res) => {
     logger.info({
       event: 'tokenize',
       userId,
+      appId,
       field,
       ttl,
       mask,
@@ -55,12 +57,7 @@ router.post("/tokenize", async (req, res) => {
 
 
 router.post("/detokenize", async (req, res) => {
-  const { tokens } = req.body;
-  // verify the consent and opa
-  // if all expired, send res.status(403).json({ error: "All field tokens expired"})
-  // const allowed = await axios.get("http://localhost:8081/v1/consent/allow")
-  // if (!allowed) res.status(403).json({ error: "Consent Policy Violated" })
-
+  const { tokens, appId, userId } = req.body;
   const result = {}
   for (const field in tokens) {
     const token = tokens[field];
@@ -72,9 +69,24 @@ router.post("/detokenize", async (req, res) => {
       continue;
     }
 
+
     const { encrypted, key, iv, mask } = JSON.parse(raw);
     const value = decryptFields(encrypted, key, iv);
     result[field] = mask ? maskValue(value) : value;
+
+    const allowed = await axios.post("http://localhost:5000/api/access/validate", {
+      userId,
+      appId,
+      field,
+      purpose: "",
+    })
+
+    if (!allowed) {
+      res.status(403).json({ error: `Consent Policy Violated for ${field}` })
+      return;
+    }
+
+
 
     logger.info({
       event: 'detokenize',

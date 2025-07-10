@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { validateAccess } from '../services/service';
+import { Request, Response } from "express";
+import { validateAccess } from "../services/service";
 
 export const validateAccessHandler = async (req: Request, res: Response) => {
   const { userId, appId, field, purpose } = req.body;
