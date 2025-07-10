@@ -7,7 +7,8 @@ import {
 } from '../services/consent.service';
 import { CreateConsentInput } from '../utils/validator';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
-import { logger } from '../utils/logger';
+// @ts-ignore
+import logger from '../utils/logger';
 
 // POST /consent
 export const createConsentHandler = async (

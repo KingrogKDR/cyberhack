@@ -5,7 +5,8 @@ import helmet from "helmet";
 
 import { startConsentExpirationJob } from "./jobs/expireConsents.job";
 import consentRoutes from "./routes/consent.routes";
-import { logger } from "./utils/logger";
+// @ts-ignore
+import logger from "./utils/logger";
 
 dotenv.config();
 
