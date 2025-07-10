@@ -19,7 +19,7 @@ services:
     build:
       context: ./AccessService
     ports:
-      - "3004:5000"
+      - "5000:5000"
     restart: unless-stopped
     depends_on:
       - policy-service
@@ -29,7 +29,7 @@ services:
     build:
       context: ./ConsentService
     ports:
-      - "3005:4000"
+      - "4000:4000"
     restart: unless-stopped
     depends_on:
       - postgres
