@@ -16,24 +16,25 @@ export const createConsentHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const body = req.body as CreateConsentInput;
-    const consent = await createConsent(body);
-    logger.info(`Consent created for user ${body.userId}`);
+    const body = req.body as Omit<CreateConsentInput, 'userId'>;
+    const userId = req.user?.id!;
+    const consent = await createConsent( body, userId );
+
+    logger.info(`Consent created for user ${userId}`);
     res.status(201).json({ consent });
   } catch (error) {
     logger.error('Error creating consent: ' + error);
-    res.status(500).json({ message: 'Failed to create consent' });
+    res.status(500).json({ message: 'Failed to create consent', error });
   }
 };
 
-
-// GET /consent/:userId
+// GET /consent (now uses userId from token, not URL param)
 export const getUserConsentsHandler = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const { userId } = req.params;
+    const userId = req.user?.id!;
     const consents = await getUserConsents(userId);
     res.status(200).json({ consents });
   } catch (error) {
@@ -43,20 +44,24 @@ export const getUserConsentsHandler = async (
 };
 
 // DELETE /consent/:id
-export const revokeConsentHandler = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const consent = await revokeConsent(id);
-    logger.info(`Consent ${id} revoked`);
-    res.status(200).json({ consent });
-  } catch (error) {
-    logger.error('Error revoking consent: ' + error);
-    res.status(500).json({ message: 'Failed to revoke consent' });
-  }
-};
+// export const revokeConsentHandler = async (
+//   req: AuthenticatedRequest,
+//   res: Response
+// ): Promise<void> => {
+//   try {
+//     const { id } = req.params;
+//     const userId = req.user.id;
+
+//     // Optional: validate that this consent actually belongs to the user
+//     const consent = await revokeConsent(id); // You can enhance this to check ownership
+
+//     logger.info(`Consent ${id} revoked by user ${userId}`);
+//     res.status(200).json({ consent });
+//   } catch (error) {
+//     logger.error('Error revoking consent: ' + error);
+//     res.status(500).json({ message: 'Failed to revoke consent' });
+//   }
+// };
 
 // GET /consent/check?userId=&appId=&field=
 export const checkConsentHandler = async (

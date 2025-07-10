@@ -1,16 +1,15 @@
-// src/services/consent.service.ts
-
+import { Consent } from "@prisma/client";
 import { prisma } from "../prisma/client";
 import { CreateConsentInput } from "../utils/validator";
-import { Consent } from "../generated/prisma";
 
 // Create a new consent record
 export const createConsent = async (
-  input: CreateConsentInput
+  input: CreateConsentInput,
+  userId: string
 ): Promise<Consent> => {
   return prisma.consent.create({
     data: {
-      userId: input.userId,
+      userId,
       appId: input.appId,
       dataFields: input.dataFields,
       purpose: input.purpose,
@@ -51,8 +50,8 @@ export const checkConsent = async (
   appId: string,
   field: string
 ): Promise<boolean> => {
-
   console.log('🔍 checkConsent service called with:', { userId, appId, field });
+
   const consents = await prisma.consent.findMany({
     where: {
       userId,

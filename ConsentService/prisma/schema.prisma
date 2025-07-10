@@ -13,15 +13,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  consents  Consent[]
+  revokeRequests ConsentRevokeRequest[]
+}
 
 model Consent {
-  id          String   @id @default(uuid())
-  userId      String
-  appId       String
-  dataFields  Json
-  purpose     String
-  expiresAt   DateTime
-  revoked     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  appId      String
+  dataFields Json
+  purpose    String
+  expiresAt  DateTime
+  revoked    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user           User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revokeRequests ConsentRevokeRequest[]
+}
+
+model ConsentRevokeRequest {
+  id         String   @id @default(uuid())
+  consentId  String
+  userId     String
+  status     String   @default("pending") // pending, approved, rejected
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  consent    Consent  @relation(fields: [consentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
