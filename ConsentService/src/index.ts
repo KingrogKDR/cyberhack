@@ -5,7 +5,9 @@ import helmet from "helmet";
 
 import { startConsentExpirationJob } from "./jobs/expireConsents.job";
 import consentRoutes from "./routes/consent.routes";
-import { logger } from "./utils/logger";
+import authRoutes from "./routes/auth.routes"
+// @ts-ignore
+import logger from "./utils/logger";
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api", consentRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (_req, res) => {
   res.send("Consent Service is running");
@@ -27,5 +30,6 @@ app.get("/", (_req, res) => {
 startConsentExpirationJob();
 
 app.listen(PORT, () => {
-  logger.info(`Consent Service running at http://localhost:${PORT}`);
+  // console.log('server is running');
+  console.log(`Consent Service running at http://localhost:${PORT}`);
 });
