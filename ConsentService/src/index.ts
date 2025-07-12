@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { startConsentExpirationJob } from "./jobs/expireConsents.job";
 import consentRoutes from "./routes/consent.routes";
 import authRoutes from "./routes/auth.routes"
+import userRoutes from "./routes/user.routes"
 // @ts-ignore
 import logger from "./utils/logger";
 
@@ -21,12 +22,13 @@ app.use(express.json());
 
 app.use("/api", consentRoutes);
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes)
 
 app.get("/", (_req, res) => {
   res.send("Consent Service is running");
 });
 
-// Start background job (e.g., hourly expiration task)
+// Start background job
 startConsentExpirationJob();
 
 app.listen(PORT, () => {

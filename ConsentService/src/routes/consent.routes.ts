@@ -3,10 +3,11 @@ import {
   createConsentHandler,
   getUserConsentsHandler,
   checkConsentHandler,
+  getUserConsentsHandlerForBank,
 } from '../controllers/consent.controller';
 
 import { validateRequest } from '../middleware/validateRequest';
-import { authenticateToken } from '../middleware/auth.middleware';
+import { authenticateToken, requireBankRole } from '../middleware/auth.middleware';
 import { createConsentSchema } from '../utils/validator';
 import { handleBankRevokeStatusHandler, requestRevokeConsentHandler } from '../controllers/revokeConsent.controller';
 
@@ -16,6 +17,7 @@ const router = Router();
 router.post(
   '/consent',
   authenticateToken,
+  requireBankRole,
   validateRequest(createConsentSchema),
   createConsentHandler
 );
@@ -28,7 +30,11 @@ router.post(
 
 // ✅ Public: Policy engine or 3rd-party services may call these
 router.get('/consent/check', checkConsentHandler);
-router.get('/consent',authenticateToken,getUserConsentsHandler);
+
+// get consent for user dashboard
+router.get('/consent/user',authenticateToken,getUserConsentsHandler);
+// get consent for bank dashboard
+router.get('/consent/bank/:id',authenticateToken,requireBankRole,getUserConsentsHandlerForBank);
 
 
 // 🔐 User initiates revoke request (authenticated)
@@ -39,7 +45,7 @@ router.post(
 );
 
 // 🏦 Bank updates status (no auth here — secure via API key or signature if needed)
-router.post('/bank/revoke-status', handleBankRevokeStatusHandler);
+router.post('/bank/revoke-status',authenticateToken,requireBankRole,handleBankRevokeStatusHandler);
 
 
 export default router;
