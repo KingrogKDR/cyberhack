@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { tryInternalRefresh } from "../worker/internalAuditRefresh";
+import { tryInternalRefresh } from "../worker/internalAuditRefresh.js";
 
 const router = Router()
 
