@@ -1,10 +1,10 @@
 // server.js
 import express from "express";
-import anomalyRoutes from "./routes/anomaly.route.js";
-import { getAnomalies } from "./services/elastic.js";
+import { getAlerts } from "./services/elastic.js";
+import { waitForElasticsearch } from "./lib/elastic.js";
 
 const app = express();
-const PORT = 8192;
+const PORT = process.env.PORT || 8192;
 
 app.use(express.json());
 
@@ -31,6 +31,19 @@ app.post("/get-alerts", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Anomaly Service running at http://localhost:${PORT}`);
-});
+// Start server with Elasticsearch readiness check
+async function startServer() {
+  try {
+    console.log('🔍 Checking Elasticsearch connection...');
+    await waitForElasticsearch();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Anomaly Service running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
