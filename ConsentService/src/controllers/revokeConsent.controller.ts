@@ -7,7 +7,7 @@ import {
   updateRevokeRequestStatus,
 } from "../services/revokeConsent.service";
 // @ts-ignore
-import logger from "../utils/logger.js";
+import logger from "../utils/logger";
 
 // POST /revoke-request/:consentId
 export const requestRevokeConsentHandler = async (

@@ -4,12 +4,11 @@ import { CreateConsentInput } from "../utils/validator";
 
 // Create a new consent record
 export const createConsent = async (
-  input: CreateConsentInput,
-  userId: string
+  input: CreateConsentInput
 ): Promise<Consent> => {
   return prisma.consent.create({
     data: {
-      userId,
+      userId:input.userId,
       appId: input.appId,
       dataFields: input.dataFields,
       purpose: input.purpose,

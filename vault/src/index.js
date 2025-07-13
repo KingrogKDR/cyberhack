@@ -17,6 +17,6 @@ import tokenRouter from "./routes/token.route.js";
 app.use("/api/v1", tokenRouter)
 app.use("/admin", adminRouter)
 
-const port = 3001;
+const port = process.env.VAULT_PORT || 8963;
 
 app.listen(port, () => console.log("Tokenizer service listening on port:", port));

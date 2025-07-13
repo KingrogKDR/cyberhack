@@ -5,9 +5,8 @@ import {
   createConsent,
   getUserConsents,
 } from "../services/consent.service";
-import { CreateConsentInput } from "../utils/validator";
 // @ts-ignore
-import logger from "../utils/logger.js";
+import logger from "../utils/logger";
 
 // POST /consent
 export const createConsentHandler = async (
@@ -15,11 +14,13 @@ export const createConsentHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const body = req.body as Omit<CreateConsentInput, "userId">;
-    const userId = req.user?.id!;
-    const consent = await createConsent(body, userId);
+    // const body = req.body as Omit<CreateConsentInput, "userId">;
+    // const userId = req.user?.id!;
+    const body = req.body;
+    // const consent = await createConsent(body, userId);
+    const consent = await createConsent(body);
 
-    logger.info(`Consent created for user ${userId}`);
+    logger.info(`Consent created for user ${req.user?.id}`);
     res.status(201).json({ consent });
   } catch (error) {
     logger.error("Error creating consent: " + error);
@@ -38,6 +39,21 @@ export const getUserConsentsHandler = async (
     res.status(200).json({ consents });
   } catch (error) {
     logger.error("Error fetching user consents: " + error);
+    res.status(500).json({ message: "Failed to fetch consents" });
+  }
+};
+
+export const getUserConsentsHandlerForBank = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.params.id;
+    const consents = await getUserConsents(userId);
+    res.status(200).json({ consents });
+  } catch (error) {
+    logger.error("Error fetching user consents: " + error);
+    console.log(error);
     res.status(500).json({ message: "Failed to fetch consents" });
   }
 };

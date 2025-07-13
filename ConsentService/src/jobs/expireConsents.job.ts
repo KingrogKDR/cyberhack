@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import { prisma } from "../prisma/client";
 // @ts-ignore
-import logger from "../utils/logger.js";
+import logger from "../utils/logger";
 
 export const startConsentExpirationJob = () => {
   // Runs every hour at minute 0 → "0 * * * *"

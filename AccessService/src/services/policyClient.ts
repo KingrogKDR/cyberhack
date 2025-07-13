@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const POLICY_SERVICE_URL = process.env.POLICY_SERVICE_URL;
+
 export async function checkPolicy(
   appId: string,
   field: string,
@@ -7,7 +9,7 @@ export async function checkPolicy(
 ): Promise<boolean> {
   try {
     const res = await axios.post(
-      "http://policy-service:8181/v1/data/data_access/allow",
+      `${POLICY_SERVICE_URL}/v1/data/data_access/allow`,
       { input: { appId, field, purpose } }
     );
     return res.data.result === true;

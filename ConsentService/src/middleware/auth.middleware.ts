@@ -33,3 +33,22 @@ export const authenticateToken = (
     return;
   }
 };
+
+
+export const requireBankRole = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void => {
+  if (!req.user) {
+    res.status(401).json({ error: 'Unauthorized. User not found in request.' });
+    return;
+  }
+
+  if (req.user.role !== 'bank') {
+    res.status(403).json({ error: 'Forbidden. Bank role required.' });
+    return;
+  }
+
+  next();
+};
