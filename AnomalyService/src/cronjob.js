@@ -6,6 +6,7 @@ import {
 import { sleep } from "./lib/utils.js";
 import { getEmail } from "./services/db.js";
 import { sendEmail } from "./services/mailer.js";
+import { waitForElasticsearch } from "./lib/elastic.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -17,7 +18,11 @@ async function job() {
     windowMinutes: 5,
   });
 
-  console.log("Anomalies found:", anomalies);
+  if (anomalies.length === 0) {
+    console.log("No anomalies found.");
+    return;
+  }
+  console.log("Anomalies found:", anomalies.length);
 
   // for each anomaly send alerts
   for (const anomaly of anomalies) {
@@ -77,11 +82,20 @@ async function job() {
 }
 
 (async () => {
+  console.log('🔍 Cronjob waiting for Elasticsearch...');
+  await waitForElasticsearch();
+  console.log('✅ Cronjob starting anomaly detection...');
+  
   let i = 1;
   while (true) {
-    console.log("Iteration: ", i);
-    await job();
-    await sleep(1000);
-    i++;
+    try {
+      // console.log("Iteration: ", i);
+      await job();
+      await sleep(60 * 1000);
+      i++;
+    } catch (error) {
+      console.error('❌ Error in cronjob iteration:', error);
+      await sleep(120 * 1000); // Wait longer on error
+    }
   }
 })();
