@@ -1,3 +1,4 @@
+import axios from "axios";
 import { createHmac } from "crypto";
 import { Router } from "express";
 import { decryptFields, encryptFields } from "../utils/cryptoUtils.js";
@@ -74,25 +75,34 @@ router.post("/detokenize", async (req, res) => {
     const value = decryptFields(encrypted, key, iv);
     result[field] = mask ? maskValue(value) : value;
 
-    const allowed = await axios.post("http://localhost:5000/api/access/validate", {
-      userId,
-      appId,
-      field,
-      purpose: "",
-    })
-
-    if (!allowed) {
-      res.status(403).json({ error: `Consent Policy Violated for ${field}` })
-      return;
+    let allowed;
+    try {
+      const response = await axios.post("http://access-service:5000/api/access/validate", {
+        userId,
+        appId,
+        field,
+        purpose: "budgeting",
+      });
+      allowed = response.data.access;
+    } catch (err) {
+      logger.error({ error: err.message, field }, 'Access validation failed');
+      return res.status(500).json({ error: `Access service unreachable for field: ${field}` });
     }
 
+
+    if (!allowed) {
+      const reason = response.data.reason || 'Unknown reason';
+      res.status(403).json({ error: `Consent Policy Violated for ${field}: ${reason}` });
+      return;
+    }
 
 
     logger.info({
       event: 'detokenize',
       field,
       token,
-      masked: mask
+      masked: mask,
+      appId
     }, 'Token accessed');
   }
   res.status(200).json(result)

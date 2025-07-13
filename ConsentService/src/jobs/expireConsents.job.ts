@@ -1,12 +1,12 @@
-import cron from 'node-cron';
-import { prisma } from '../prisma/client';
+import cron from "node-cron";
+import { prisma } from "../prisma/client";
 // @ts-ignore
-import logger from '../utils/logger';
+import logger from "../utils/logger.js";
 
 export const startConsentExpirationJob = () => {
   // Runs every hour at minute 0 → "0 * * * *"
-  cron.schedule('*/10 * * * *', async () => {
-    logger.info('⏳ Consent expiration job started');
+  cron.schedule("*/10 * * * *", async () => {
+    logger.info("⏳ Consent expiration job started");
 
     try {
       const now = new Date();
@@ -24,9 +24,11 @@ export const startConsentExpirationJob = () => {
         },
       });
 
-      logger.info(`✅ Expired ${expiredConsents.count} consents at ${now.toISOString()}`);
+      logger.info(
+        `✅ Expired ${expiredConsents.count} consents at ${now.toISOString()}`
+      );
     } catch (error) {
-      logger.error('❌ Error expiring consents:', error);
+      logger.error("❌ Error expiring consents:", error);
     }
   });
 };

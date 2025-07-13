@@ -50,7 +50,7 @@ export const checkConsent = async (
   appId: string,
   field: string
 ): Promise<boolean> => {
-  console.log('🔍 checkConsent service called with:', { userId, appId, field });
+  // console.log('checkConsent service called with:', { userId, appId, field });
 
   const consents = await prisma.consent.findMany({
     where: {
@@ -63,15 +63,15 @@ export const checkConsent = async (
     },
   });
 
-  console.log(
-    "Consent matches:",
-    consents.map((c) => ({
-      appId: c.appId,
-      revoked: c.revoked,
-      expiresAt: c.expiresAt,
-      dataFields: c.dataFields,
-    }))
-  );
+  // console.log(
+  //   "Consent matches:",
+  //   consents.map((c) => ({
+  //     appId: c.appId,
+  //     revoked: c.revoked,
+  //     expiresAt: c.expiresAt,
+  //     dataFields: c.dataFields,
+  //   }))
+  // );
 
   return consents.some(
     (consent) =>

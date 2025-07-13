@@ -6,9 +6,7 @@ services:
       context: ./vault
       dockerfile: Dockerfile
     ports:
-      - "${PORT}:${PORT}"
-    environment:
-      - PORT=${PORT}
+      - "3001:3001"
     depends_on:
       - redis
       - elasticsearch
@@ -19,7 +17,7 @@ services:
     build:
       context: ./AccessService
     ports:
-      - "3004:5000"
+      - "5000:5000"
     restart: unless-stopped
     depends_on:
       - policy-service
@@ -29,7 +27,7 @@ services:
     build:
       context: ./ConsentService
     ports:
-      - "3005:4000"
+      - "4000:4000"
     restart: unless-stopped
     depends_on:
       - postgres
@@ -38,7 +36,15 @@ services:
     image: openpolicyagent/opa:latest
     volumes:
       - ./PolicyEngine:/policy
-    command: "run --server --set=decision_logs.console=true /policy/data-access.rego"
+    command:
+      [
+        "run",
+        "--server",
+        "--addr=0.0.0.0:8181",
+        "--set=decision_logs.console=true",
+        "/policy/data-access.rego",
+      ]
+
     ports:
       - "8181:8181"
     restart: unless-stopped

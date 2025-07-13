@@ -7,7 +7,7 @@ import {
 } from "../services/consent.service";
 import { CreateConsentInput } from "../utils/validator";
 // @ts-ignore
-import logger from "../utils/logger";
+import logger from "../utils/logger.js";
 
 // POST /consent
 export const createConsentHandler = async (
