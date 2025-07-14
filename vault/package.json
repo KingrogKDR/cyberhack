@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "node src/index.js"
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "Abhishek Saikia",
@@ -18,7 +19,17 @@
     "pino": "^9.7.0",
     "pino-elasticsearch": "^8.1.0",
     "pino-http": "^10.5.0",
-    "redis": "^5.5.6",
+    "redis": "^5.6.0",
+    "typescript": "^5.8.3",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.13",
+    "@types/pino": "^7.0.4",
+    "@types/pino-http": "^5.8.4",
+    "@types/redis": "^4.0.10"
   }
 }

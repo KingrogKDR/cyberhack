@@ -3,8 +3,12 @@ FROM node:20-alpine
 WORKDIR /vault
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --production
 
 COPY . .
 
-CMD ["node", "src/index.js"]
+RUN npm run build
+
+EXPOSE 8963
+
+CMD ["node", "dist/index.js"]
