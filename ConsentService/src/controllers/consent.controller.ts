@@ -20,7 +20,7 @@ export const createConsentHandler = async (
     // const consent = await createConsent(body, userId);
     const consent = await createConsent(body);
 
-    logger.info(`Consent created for user ${req.user?.id}`);
+    logger.info(`Consent created for user ${req.body?.id}`);
     res.status(201).json({ consent });
   } catch (error) {
     logger.error("Error creating consent: " + error);

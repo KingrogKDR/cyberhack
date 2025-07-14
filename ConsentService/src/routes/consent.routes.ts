@@ -13,11 +13,10 @@ import { handleBankRevokeStatusHandler, requestRevokeConsentHandler } from '../c
 
 const router = Router();
 
-// 🔐 Protected: Only authenticated users can create or revoke consents
 router.post(
   '/consent',
-  authenticateToken,
-  requireBankRole,
+  // authenticateToken,
+  // requireBankRole,
   validateRequest(createConsentSchema),
   createConsentHandler
 );
