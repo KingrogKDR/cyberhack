@@ -10,7 +10,7 @@ app.use(express.json());
 app.use("/fintech/register", registerRoutes);
 app.use("/fintech/verify-otp", verifyOtpRoutes);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.BANK_SERVICE_PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Fintech service running on port ${PORT}`);
 });
