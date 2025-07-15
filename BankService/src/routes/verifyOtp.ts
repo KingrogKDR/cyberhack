@@ -1,8 +1,8 @@
-import express from "express";
-import { otpStore } from "../data/otpStore";
-import { consentTemplates } from "../data/consentTemplates";
-import ms, { StringValue } from "ms";
 import axios from "axios";
+import express from "express";
+import ms, { StringValue } from "ms";
+import { consentTemplates } from "../data/consentTemplates";
+import { otpStore } from "../data/otpStore";
 import { prisma } from "../prisma";
 
 const router = express.Router();
@@ -10,7 +10,9 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   const { email, otp, appId } = req.body;
   if (!email || !otp || !appId) {
-    return res.status(400).json({ status: "error", message: "Missing email, otp, or appId" });
+    return res
+      .status(400)
+      .json({ status: "error", message: "Missing email, otp, or appId" });
   }
 
   const expectedOtp = otpStore[email];
@@ -21,21 +23,27 @@ router.post("/", async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(404).json({ status: "rejected", reason: "User not found in bank" });
+      return res
+        .status(404)
+        .json({ status: "rejected", reason: "User not found in bank" });
     }
 
     const template = consentTemplates[appId];
     if (!template) {
-      return res.status(400).json({ status: "rejected", reason: "Unknown app" });
+      return res
+        .status(400)
+        .json({ status: "rejected", reason: "Unknown app" });
     }
 
-    // ✅ Filter fields using OPA one-by-one
     const allowedFields: string[] = [];
 
     for (const field of template.dataFields) {
-      const policyRes = await axios.post(`http://localhost:8080/v1/data/data_access/allow`, {
-        input: { appId, field, purpose: template.purpose },
-      });
+      const policyRes = await axios.post(
+        `${process.env.POLICY_SERVICE_URL}/v1/data/data_access/allow`,
+        {
+          input: { appId, field, purpose: template.purpose },
+        }
+      );
 
       if (policyRes.data.result === true) {
         allowedFields.push(field);
@@ -43,11 +51,12 @@ router.post("/", async (req, res) => {
     }
 
     if (allowedFields.length === 0) {
-      return res.status(403).json({ status: "rejected", reason: "Policy denied all fields" });
+      return res
+        .status(403)
+        .json({ status: "rejected", reason: "Policy denied all fields" });
     }
 
-    // ✅ Send consent creation request with allowed fields only
-    await axios.post("http://localhost:4000/api/consent", {
+    await axios.post(`${process.env.CONSENT_SERVICE_URL}/api/consent`, {
       userId: user.id,
       appId,
       dataFields: allowedFields,

@@ -1,6 +1,6 @@
+import axios from "axios";
 import express from "express";
 import { prisma } from "../prisma";
-import axios from "axios";
 
 const router = express.Router();
 
@@ -16,7 +16,9 @@ router.post("/", async (req, res) => {
   const { email, fields, appId } = req.body;
 
   if (!email || !Array.isArray(fields) || !appId) {
-    return res.status(400).json({ message: "Missing or invalid email, fields, or appId" });
+    return res
+      .status(400)
+      .json({ message: "Missing or invalid email, fields, or appId" });
   }
 
   try {
@@ -38,17 +40,20 @@ router.post("/", async (req, res) => {
 
     for (const field of fields) {
       // Consent check
-      const consentRes = await axios.get("http://localhost:4000/api/consent/check", {
-        params: {
-          userId: user.id,
-          appId,
-          field,
-        },
-      });
+      const consentRes = await axios.get(
+        `${process.env.CONSENT_SERVICE_URL}/api/consent/check`,
+        {
+          params: {
+            userId: user.id,
+            appId,
+            field,
+          },
+        }
+      );
       // console.log(consentRes);
 
       if (consentRes.data.allowed !== true) {
-        console.log(`❌ Consent denied for field: ${field}`);
+        console.log(`Consent denied for field: ${field}`);
         continue;
       }
 
@@ -71,18 +76,21 @@ router.post("/", async (req, res) => {
     }
 
     // Step 3: Tokenize allowed fields
-    const tokenRes = await axios.post("http://localhost:8963/api/v1/tokenize", {
-      requestedData,
-      userId: user.id,
-      appId,
-    });
+    const tokenRes = await axios.post(
+      `${process.env.VAULT_SERVICE_URL}/api/v1/tokenize`,
+      {
+        requestedData,
+        userId: user.id,
+        appId,
+      }
+    );
 
     return res.json({
       tokenizedFields: tokenRes.data.tokens,
       allowedFields,
     });
   } catch (err: any) {
-    console.error("❌ Tokenization failed:", err);
+    console.error("Tokenization failed:", err);
     return res.status(500).json({
       message: "Failed to fetch or tokenize data",
       error: err?.response?.data || err.message,

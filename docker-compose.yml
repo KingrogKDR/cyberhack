@@ -14,24 +14,25 @@ services:
       - redis
       - elasticsearch
       - kibana
-      - access-service
-
-  access-service:
-    build:
-      context: ./AccessService
-    ports:
-      - "${ACCESS_SERVICE_PORT}:${ACCESS_SERVICE_PORT}"
-    environment:
-      - PORT=${ACCESS_SERVICE_PORT}
-      - NODE_ENV=${NODE_ENV}
-      - CONSENT_SERVICE_URL=${CONSENT_SERVICE_URL}
-      - POLICY_SERVICE_URL=${POLICY_SERVICE_URL}
-    env_file:
-      - .env
-    restart: unless-stopped
-    depends_on:
-      - policy-service
       - consent-service
+      - policy-service
+
+  # access-service:
+  #   build:
+  #     context: ./AccessService
+  #   ports:
+  #     - "${ACCESS_SERVICE_PORT}:${ACCESS_SERVICE_PORT}"
+  #   environment:
+  #     - PORT=${ACCESS_SERVICE_PORT}
+  #     - NODE_ENV=${NODE_ENV}
+  #     - CONSENT_SERVICE_URL=${CONSENT_SERVICE_URL}
+  #     - POLICY_SERVICE_URL=${POLICY_SERVICE_URL}
+  #   env_file:
+  #     - .env
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - policy-service
+  #     - consent-service
 
   anomaly-service:
     build:
