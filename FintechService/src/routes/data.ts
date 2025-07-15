@@ -1,10 +1,10 @@
 import express from "express";
 import axios from "axios";
-import { BANK_SERVICE_URL, APP_ID } from "../config";
+import { BANK_SERVICE_URL } from "../config";
 
 
 const router = express.Router();
-
+const APP_ID="budget-app"
 /**
  * POST /fintech/data
  * {
@@ -32,22 +32,16 @@ router.post("/", async (req, res) => {
       return res.status(403).json({ message: "No data returned by bank" });
     }
 
-    // Step 2: Detokenize each token
-    const realData: Record<string, any> = {};
-    for (const field of fields) {
-      const token = tokenizedFields[field];
-      if (!token) continue;
+    // Step 2: Detokenize all tokens in a single request
+    const detokenRes = await axios.post("http://localhost:8963/api/v1/detokenize", {
+      tokens: tokenizedFields,
+      appId:APP_ID,
+    });
 
-      const detokenRes = await axios.post("http://localhost:8963/api/v1/detokenize", {
-        token,
-      });
-
-      realData[field] = detokenRes.data.value;
-    }
-
-    return res.json({ data: realData });
+    // Step 3: Return final detokenized data
+    return res.json({ data: detokenRes.data });
   } catch (err: any) {
-    console.error("❌ Fintech data fetch failed:", err.message);
+    console.error("Fintech data fetch failed:", err);
     return res.status(500).json({
       message: "Failed to fetch detokenized data",
       error: err?.response?.data || err.message,

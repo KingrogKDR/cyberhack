@@ -43,7 +43,7 @@ router.post(
   requestRevokeConsentHandler
 );
 
-// 🏦 Bank updates status (no auth here — secure via API key or signature if needed)
+// 🏦 Bank updates status 
 router.post('/bank/revoke-status',authenticateToken,requireBankRole,handleBankRevokeStatusHandler);
 
 
