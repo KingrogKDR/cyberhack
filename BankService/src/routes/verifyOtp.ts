@@ -4,9 +4,13 @@ import ms, { StringValue } from "ms";
 import { consentTemplates } from "../data/consentTemplates";
 import { otpStore } from "../data/otpStore";
 import { prisma } from "../prisma";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
+
+interface PolicyResponse {
+  result: boolean;
+}
 
 const router = express.Router();
 
@@ -42,7 +46,7 @@ router.post("/", async (req, res) => {
 
     // policy check
     for (const field of template.dataFields) {
-      const policyRes = await axios.post(
+      const policyRes = await axios.post<PolicyResponse>(
         `http://localhost:8181/v1/data/data_access/allow`,
         {
           input: { appId, field, purpose: template.purpose },
