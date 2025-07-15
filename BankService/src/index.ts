@@ -12,7 +12,7 @@ app.use("/bank/initiate-registration", initiateRegistration);
 app.use("/bank/verify-otp", verifyOtp);
 app.use("/bank/data", data);
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.FINTECH_SERVICE_PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Bank service running on port ${PORT}`);
 });
