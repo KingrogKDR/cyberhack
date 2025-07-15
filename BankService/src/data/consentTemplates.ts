@@ -3,8 +3,8 @@ export const consentTemplates: Record<string, {
   purpose: string;
   duration: string;
 }> = {
-  app1: {
-    dataFields: ["amount", "date"],
+  "budget-app": {
+    dataFields: ["balance", "date"],
     purpose: "budgeting",
     duration: "30d",
   },

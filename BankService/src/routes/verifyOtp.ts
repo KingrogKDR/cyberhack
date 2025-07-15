@@ -4,6 +4,9 @@ import ms, { StringValue } from "ms";
 import { consentTemplates } from "../data/consentTemplates";
 import { otpStore } from "../data/otpStore";
 import { prisma } from "../prisma";
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const router = express.Router();
 
@@ -37,9 +40,10 @@ router.post("/", async (req, res) => {
 
     const allowedFields: string[] = [];
 
+    // policy check
     for (const field of template.dataFields) {
       const policyRes = await axios.post(
-        `${process.env.POLICY_SERVICE_URL}/v1/data/data_access/allow`,
+        `http://localhost:8181/v1/data/data_access/allow`,
         {
           input: { appId, field, purpose: template.purpose },
         }
@@ -56,7 +60,7 @@ router.post("/", async (req, res) => {
         .json({ status: "rejected", reason: "Policy denied all fields" });
     }
 
-    await axios.post(`${process.env.CONSENT_SERVICE_URL}/api/consent`, {
+    await axios.post(`http://localhost:4000/api/consent`, {
       userId: user.id,
       appId,
       dataFields: allowedFields,
@@ -67,7 +71,7 @@ router.post("/", async (req, res) => {
     delete otpStore[email];
     return res.json({ status: "success", allowedFields });
   } catch (err: any) {
-    console.error("Consent creation failed:", err?.message);
+    console.error("Consent creation failed:", err);
     return res.status(500).json({
       status: "error",
       reason: "Consent creation failed",

@@ -71,13 +71,15 @@ router.post("/", async (req, res) => {
       allowedFields.push(field);
     }
 
+    console.log(requestedData);
+
     if (Object.keys(requestedData).length === 0) {
       return res.status(403).json({ message: "No fields allowed by consent" });
     }
 
     // Step 3: Tokenize allowed fields
     const tokenRes = await axios.post(
-      `${process.env.VAULT_SERVICE_URL}/api/v1/tokenize`,
+      `http://localhost:8963/api/v1/tokenize`,
       {
         requestedData,
         userId: user.id,

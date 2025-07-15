@@ -6,7 +6,7 @@ default allow = false
 allow if {
   input.appId == "budget-app"
   input.purpose == "budgeting"
-  input.field == "amount"
+  input.field == "balance"
 }
 
 allow if {
