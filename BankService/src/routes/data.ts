@@ -4,6 +4,15 @@ import { prisma } from "../prisma";
 
 const router = express.Router();
 
+//definig interfaces here
+interface ConsentResponse {
+  allowed: boolean;
+}
+
+interface TokenizeResponse {
+  tokens: Record<string, string>;
+}
+
 /**
  * POST /bank/data
  * {
@@ -40,7 +49,7 @@ router.post("/", async (req, res) => {
 
     for (const field of fields) {
       // Consent check
-      const consentRes = await axios.get(
+      const consentRes = await axios.get<ConsentResponse>(
         `${process.env.CONSENT_SERVICE_URL}/api/consent/check`,
         {
           params: {
@@ -50,7 +59,6 @@ router.post("/", async (req, res) => {
           },
         }
       );
-      // console.log(consentRes);
 
       if (consentRes.data.allowed !== true) {
         console.log(`Consent denied for field: ${field}`);
@@ -78,7 +86,7 @@ router.post("/", async (req, res) => {
     }
 
     // Step 3: Tokenize allowed fields
-    const tokenRes = await axios.post(
+    const tokenRes = await axios.post<TokenizeResponse>(
       `http://localhost:8963/api/v1/tokenize`,
       {
         requestedData,
