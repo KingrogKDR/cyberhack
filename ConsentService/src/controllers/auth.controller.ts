@@ -5,7 +5,7 @@ import { prisma } from "../prisma/client";
 // @ts-ignore
 import logger from "../utils/logger";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 // POST /auth/register
 export const registerHandler = async (
@@ -39,7 +39,7 @@ export const registerHandler = async (
       },
     });
 
-    logger.info(`🆕 Registered user ${email}`);
+    logger.info(` Registered user ${email}`);
     res.status(201).json({
       message: "User registered successfully",
       user: {
@@ -72,7 +72,7 @@ export const loginHandler = async (
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
+    console.log(JWT_SECRET)
     const token = jwt.sign(
       {
         id: user.id,
