@@ -1,7 +1,12 @@
 import express from "express";
 import axios from "axios";
-import { BANK_SERVICE_URL, APP_ID } from "../config";
+import { APP_ID } from "../config";
 import { fintechUsers } from "../data/user";
+
+import dotenv from "dotenv";
+dotenv.config();
+
+const BANK_SERVICE_URL = process.env.BANK_SERVICE_URL
 
 const router = express.Router();
 

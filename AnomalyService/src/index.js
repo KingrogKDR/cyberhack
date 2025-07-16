@@ -17,16 +17,26 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post("/get-alerts", async (req, res) => {
+app.get("/get-alerts", async (req, res) => {
   const { userId } = req.query;
   try {
-    const alerts = await getAlerts({
-      userId,
-    });
+    const alerts = await getAlerts("alerts", userId);
 
     res.json({ alerts });
   } catch (err) {
-    console.error("Error getting anomalies:", err);
+    console.error("Error getting alerts:", err);
+    res.status(500).send(err || "Internal Server Error");
+  }
+});
+
+app.get("/get-alerts-users", async (req, res) => {
+  try {
+    const alerts = await getAlerts("alerts");
+    const userIds = alerts.map(alert => alert.userId);
+
+    res.json({ userIds });
+  } catch (err) {
+    console.error("Error getting alerts:", err);
     res.status(500).send(err || "Internal Server Error");
   }
 });

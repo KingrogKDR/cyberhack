@@ -49,15 +49,13 @@ export const getAnomalyQuery = (
 export const getAlertsQuery = (index = "alerts", userId = null) => ({
   index: index,
   size: 1000,
-  body: {
-    query: userId
-      ? {
-          bool: {
-            must: [{ term: { userId: userId } }],
-          },
-        }
-      : { match_all: {} },
-  },
+  query: userId
+    ? {
+        bool: {
+          must: [{ term: { "userId.keyword": userId } }],
+        },
+      }
+    : { match_all: {} },
 });
 
 

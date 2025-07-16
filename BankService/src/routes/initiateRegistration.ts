@@ -19,7 +19,8 @@ router.post("/", async (req, res) => {
     otpStore[email] = otp;
 
     console.log(`Generated OTP for ${email}: ${otp}`);
-    return res.json({ message: "OTP generated and sent" });
+    return res.json({message: `Generated OTP for ${email}: ${otp}`});
+    // return res.json({ message: "OTP generated and sent"});
   } catch (err) {
     console.error("Database error:", err);
     return res.status(500).json({ message: "Internal server error" });

@@ -91,6 +91,56 @@ services:
       - .env
     restart: unless-stopped
 
+  bank-service:
+    build:
+      context: ./BankService
+    ports:
+      - "${BANK_SERVICE_PORT}:${BANK_SERVICE_PORT}"
+    environment:
+      - PORT=${BANK_SERVICE_PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=${NODE_ENV}
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  fintech-service:
+    build:
+      context: ./FintechService
+    ports:
+      - "${FINTECH_SERVICE_PORT}:${FINTECH_SERVICE_PORT}"
+    environment:
+      - PORT=${FINTECH_SERVICE_PORT}
+      - NODE_ENV=${NODE_ENV}
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  client-fintech:
+    build:
+      context: ./client-fintech
+    ports:
+      - "${CLIENT_FINTECH_PORT}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  client-vault:
+    build:
+      context: ./client-vault
+    ports:
+      - "${CLIENT_VAULT_PORT}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    env_file:
+      - .env
+    restart: unless-stopped
+
   redis:
     image: redis:7
     ports:
