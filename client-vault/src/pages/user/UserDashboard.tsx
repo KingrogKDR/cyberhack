@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Shield, FileText, Bell, AlertTriangle } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { consentApi } from '../../api/consent';
@@ -12,12 +12,34 @@ export const UserDashboard: React.FC = () => {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Ref to store interval id for cleanup
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     if (activeTab === 'consents') {
       fetchConsents();
+      // Clear any previous interval
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     } else {
       fetchAlerts();
+      // Set up interval to auto-refresh alerts every 3 minutes
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(() => {
+        fetchAlerts();
+      }, 180000); // 3 minutes
     }
+    // Cleanup on tab change or unmount
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
   }, [activeTab]);
 
   const fetchConsents = async () => {
@@ -149,6 +171,18 @@ export const UserDashboard: React.FC = () => {
 
   const renderAlerts = () => (
     <div className="space-y-4">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={fetchAlerts}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          disabled={loading}
+        >
+          <svg className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.635 19.364A9 9 0 104.582 9.582" />
+          </svg>
+          <span>Refresh</span>
+        </button>
+      </div>
       {loading ? (
         <div className="flex items-center justify-center h-32">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
