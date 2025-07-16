@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3001/fintech';
+const API_BASE_URL = 'http://localhost:3002/fintech';
 
 console.log('API Base URL:', API_BASE_URL);
 const api = axios.create({

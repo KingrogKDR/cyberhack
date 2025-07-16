@@ -87,7 +87,7 @@ router.post("/", async (req, res) => {
 
     // Step 3: Tokenize allowed fields
     const tokenRes = await axios.post<TokenizeResponse>(
-      `http://localhost:8963/api/v1/tokenize`,
+      `http://tokenizer:8963/api/v1/tokenize`,
       {
         requestedData,
         userId: user.id,

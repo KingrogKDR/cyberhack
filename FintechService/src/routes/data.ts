@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
     }
 
     // Step 2: Detokenize all tokens in a single request
-    const detokenRes = await axios.post("http://localhost:8963/api/v1/detokenize", {
+    const detokenRes = await axios.post("http://tokenizer:8963/api/v1/detokenize", {
       tokens: tokenizedFields,
       appId:APP_ID,
     });

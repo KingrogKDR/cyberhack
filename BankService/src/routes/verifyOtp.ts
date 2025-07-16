@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     // policy check
     for (const field of template.dataFields) {
       const policyRes = await axios.post<PolicyResponse>(
-        `http://localhost:8181/v1/data/data_access/allow`,
+        `http://policy-service:8181/v1/data/data_access/allow`,
         {
           input: { appId, field, purpose: template.purpose },
         }
@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
         .json({ status: "rejected", reason: "Policy denied all fields" });
     }
 
-    await axios.post(`http://localhost:4000/api/consent`, {
+    await axios.post(`http://consent-service:4000/api/consent`, {
       userId: user.id,
       appId,
       dataFields: allowedFields,
