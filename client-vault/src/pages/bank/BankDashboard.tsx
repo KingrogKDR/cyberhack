@@ -494,7 +494,7 @@ export const BankDashboard: React.FC = () => {
             <div className="grid gap-4">
               {alertUsers.map((user) => (
                 <div
-                  key={user.userId}
+                  key={user.id}
                   className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
                 >
                   <div>

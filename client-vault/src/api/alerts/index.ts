@@ -61,9 +61,9 @@ export const alertsApi = {
       const headers = authUtils.getAuthHeaders();
       console.log('🔄 Alerts API - Using headers:', headers);
       
-      const response = await axios.get(`${ALERT_BASE_URL}/get-alert/${userId}`, { headers });
+      const response = await axios.get(`${ALERT_BASE_URL}/get-alerts-user/${userId}`, { headers });
       console.log('✅ Alerts API - Get user alerts by ID success:', response.data);
-      return response.data;
+      return response.data.alerts;
     } catch (error) {
       console.error('❌ Alerts API - Get user alerts by ID failed:', error);
       if (axios.isAxiosError(error)) {
