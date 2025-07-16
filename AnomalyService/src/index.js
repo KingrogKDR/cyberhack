@@ -53,7 +53,7 @@ app.get("/get-alerts", jwtMiddleware, async (req, res) => {
 
 // Get all alerts - only accessible by bank role
 app.get(
-  "/get-alerts-user",
+  "/get-alerts-user/:userId",
   jwtMiddleware,
   requireBankRole,
   async (req, res) => {
@@ -81,11 +81,11 @@ app.get("/get-all-alerts", jwtMiddleware, requireBankRole, async (req, res) => {
     );
 
     const result = usersWithAlerts.map((user) => ({
-      userId: user.id,
-      userName: user.name,
+      id: user.id,
+      name: user.name,
     }));
 
-    res.json(result);
+    res.json({userIds: result});
   } catch (err) {
     console.error("Error getting alerts users:", err);
     res.status(500).send(err || "Internal Server Error");
