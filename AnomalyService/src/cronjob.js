@@ -15,7 +15,7 @@ async function job() {
   const anomalies = await getAnomalies({
     index: "vaultguard-logs",
     threshold: 5,
-    windowMinutes: 5,
+    windowMinutes: 1,
   });
 
   if (!anomalies || anomalies?.length === 0) {
@@ -36,17 +36,17 @@ async function job() {
 
   async function sendAlerts({ userId, field, appId, count }) {
     // check if alert already exists (meaning email previously sent)
-    const alertExists = await checkAlertExists({
-      userId,
-      field,
-      appId,
-    });
-    if (alertExists) {
-      console.log(
-        `Alert already exists for user ${userId} and field ${field}. Skipping email.`
-      );
-      return;
-    }
+    // const alertExists = await checkAlertExists({
+    //   userId,
+    //   field,
+    //   appId,
+    // });
+    // if (alertExists) {
+    //   console.log(
+    //     `Alert already exists for user ${userId} and field ${field}. Skipping email.`
+    //   );
+    //   return;
+    // }
 
     // send email to user if not sent before
     console.log(
@@ -76,7 +76,7 @@ async function job() {
       field,
       appId,
       count,
-      timeRange: "5 minutes",
+      timeRange: "1 minutes",
       timestamp: new Date().toISOString(),
     });
   }
@@ -92,7 +92,7 @@ async function job() {
     try {
       // console.log("Iteration: ", i);
       await job();
-      await sleep(5 * 1000);
+      await sleep(60 * 1000);
       i++;
     } catch (error) {
       console.error('❌ Error in cronjob iteration:', error);
