@@ -69,7 +69,7 @@ export const loginHandler = async (
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid email or password 2" });
     }
     console.log(JWT_SECRET)
     const token = jwt.sign(

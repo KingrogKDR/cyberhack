@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.JWT_SECRET as string || "DEzrWh1vo6MJ6JTtvlFr0lujcKj5ISDn2thqUAv2zgZap56ZgC4SnHmeNh3MoSYR";
 
 export interface AuthenticatedRequest extends Request {
   user?: {

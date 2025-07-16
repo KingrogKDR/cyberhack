@@ -114,9 +114,10 @@ export const consentApi = {
       const headers = authUtils.getAuthHeaders();
       console.log('🔄 Consent API - Using headers:', headers);
       
-      const response = await axios.get('http://localhost:4000/api/bank/revoke-status', { headers });
-      console.log('✅ Consent API - Get revoke requests success:', response.data);
-      return response.data;
+      const response = await axios.get('http://localhost:4000/api/revoke-requests/pending', { headers });
+      // console.log(response);
+      console.log('✅ Consent API - Get revoke requests success:', response.data.pendingRequests);
+      return response.data.pendingRequests;
     } catch (error) {
       console.error('❌ Consent API - Get revoke requests failed:', error);
       if (axios.isAxiosError(error)) {

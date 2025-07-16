@@ -9,7 +9,7 @@ import {
 import { validateRequest } from '../middleware/validateRequest';
 import { authenticateToken, requireBankRole } from '../middleware/auth.middleware';
 import { createConsentSchema } from '../utils/validator';
-import { handleBankRevokeStatusHandler, requestRevokeConsentHandler } from '../controllers/revokeConsent.controller';
+import { getAllPendingRevokeRequestsHandler, getPendingRevokeRequestsForUserHandler, handleBankRevokeStatusHandler, requestRevokeConsentHandler } from '../controllers/revokeConsent.controller';
 
 const router = Router();
 
@@ -46,5 +46,8 @@ router.post(
 // 🏦 Bank updates status 
 router.post('/bank/revoke-status',authenticateToken,requireBankRole,handleBankRevokeStatusHandler);
 
+
+router.get("/revoke-requests/pending/:userId", authenticateToken,requireBankRole, getPendingRevokeRequestsForUserHandler);
+router.get("/revoke-requests/pending", authenticateToken,requireBankRole, getAllPendingRevokeRequestsHandler);
 
 export default router;
