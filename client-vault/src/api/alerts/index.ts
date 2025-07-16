@@ -2,8 +2,10 @@ import axios from 'axios';
 import { authUtils } from '../../utils/auth';
 import type { Alert, User } from '../../types';
 
+const ALERT_BASE_URL='http://anomaly-service:8192';
+
 export const alertsApi = {
-  // User: Get user alerts (dummy endpoint for now)
+  // User: Get user alerts used by user dashboard
   getUserAlerts: async (): Promise<Alert[]> => {
     console.log('🔄 Alerts API - Get user alerts request');
     
@@ -11,7 +13,7 @@ export const alertsApi = {
       const headers = authUtils.getAuthHeaders();
       console.log('🔄 Alerts API - Using headers:', headers);
       
-      const response = await axios.get('http://localhost:4000/api/alerts/user', { headers });
+      const response = await axios.get(`${ALERT_BASE_URL}/get-alerts`, { headers });
       console.log('✅ Alerts API - Get user alerts success:', response.data);
       return response.data;
     } catch (error) {
@@ -27,7 +29,7 @@ export const alertsApi = {
     }
   },
 
-  // Bank: Get all users for alerts (dummy endpoint for now)
+  // Bank: Get all users details for alerts 
   getAllUsersForAlerts: async (): Promise<{ users: User[] }> => {
     console.log('🔄 Alerts API - Get all users for alerts');
     
@@ -35,13 +37,13 @@ export const alertsApi = {
       const headers = authUtils.getAuthHeaders();
       console.log('🔄 Alerts API - Using headers:', headers);
       
-      const response = await axios.get('http://localhost:4000/api/alerts/users', { headers });
-      console.log('✅ Alerts API - Get all users for alerts success:', response.data);
+      const response = await axios.get(`${ALERT_BASE_URL}/get-alerts-users`, { headers });
+      console.log('Alerts API - Get all users for alerts success:', response.data);
       return response.data;
     } catch (error) {
-      console.error('❌ Alerts API - Get all users for alerts failed:', error);
+      console.error('Alerts API - Get all users for alerts failed:', error);
       if (axios.isAxiosError(error)) {
-        console.error('❌ Alerts API - Get all users for alerts error details:', {
+        console.error(' Alerts API - Get all users for alerts error details:', {
           status: error.response?.status,
           data: error.response?.data,
           message: error.message
@@ -51,7 +53,7 @@ export const alertsApi = {
     }
   },
 
-  // Bank: Get alerts for specific user (dummy endpoint for now)
+  // Bank: Get alerts for specific user 
   getUserAlertsById: async (userId: string): Promise<Alert[]> => {
     console.log('🔄 Alerts API - Get user alerts by ID:', userId);
     
@@ -59,7 +61,7 @@ export const alertsApi = {
       const headers = authUtils.getAuthHeaders();
       console.log('🔄 Alerts API - Using headers:', headers);
       
-      const response = await axios.get(`http://localhost:4000/api/alerts/user/${userId}`, { headers });
+      const response = await axios.get(`${ALERT_BASE_URL}/get-alert/${userId}`, { headers });
       console.log('✅ Alerts API - Get user alerts by ID success:', response.data);
       return response.data;
     } catch (error) {
