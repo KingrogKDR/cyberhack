@@ -107,10 +107,10 @@ export const BankDashboard: React.FC = () => {
       const response = await alertsApi.getAllUsersForAlerts();
       console.log(
         "✅ BankDashboard - Alert users fetched successfully:",
-        response.users.length,
+        response.userIds.length,
         "users"
       );
-      setAlertUsers(response.users);
+      setAlertUsers(response.userIds);
     } catch (error) {
       console.error(
         "❌ BankDashboard - Failed to fetch users for alerts:",
@@ -494,12 +494,12 @@ export const BankDashboard: React.FC = () => {
             <div className="grid gap-4">
               {alertUsers.map((user) => (
                 <div
-                  key={user.id}
+                  key={user.userId}
                   className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
                 >
                   <div>
                     <h4 className="font-medium text-gray-900">{user.name}</h4>
-                    <p className="text-sm text-gray-600">{user.email}</p>
+                    {/* <p className="text-sm text-gray-600">{user.email}</p> */}
                   </div>
                   <button
                     onClick={() => {
