@@ -7,6 +7,10 @@ import { prisma } from "../prisma";
 
 const router = express.Router();
 
+interface PolicyResponse {
+  result: boolean;
+}
+
 router.post("/", async (req, res) => {
   const { email, otp, appId } = req.body;
   if (!email || !otp || !appId) {
@@ -38,7 +42,7 @@ router.post("/", async (req, res) => {
     const allowedFields: string[] = [];
 
     for (const field of template.dataFields) {
-      const policyRes = await axios.post(
+      const policyRes = await axios.post<PolicyResponse>(
         `${process.env.POLICY_SERVICE_URL}/v1/data/data_access/allow`,
         {
           input: { appId, field, purpose: template.purpose },
