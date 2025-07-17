@@ -6,7 +6,7 @@ export const consentTemplates: Record<string, {
   "budget-app": {
     dataFields: ["balance", "date"],
     purpose: "budgeting",
-    duration: "30d",
+    duration: "2m",
   },
   app2: {
     dataFields: ["investment_history"],

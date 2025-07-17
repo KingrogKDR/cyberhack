@@ -35,6 +35,32 @@ router.post("/", async (req, res) => {
         .json({ status: "rejected", reason: "User not found in bank" });
     }
 
+    const existingConsent = await prisma.consent.findFirst({
+      where: {
+        userId: user.id,
+        appId,
+        revoked: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // console.log(new Date(existingConsent!.expiresAt) > new Date());
+    if (existingConsent !== null) {
+      const expiresAt = new Date(existingConsent.expiresAt);
+      const now = new Date();
+
+      if (expiresAt > now) {
+        delete otpStore[email];
+        return res.json({
+          status: "success",
+          message: "Active consent already exists",
+          allowedFields: existingConsent.dataFields,
+        });
+      }
+    }
+
     const template = consentTemplates[appId];
     if (!template) {
       return res
