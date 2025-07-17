@@ -9,7 +9,7 @@ interface VaultGuardLog {
 }
 
 const streamToElastic = pinoElasticsearch({
-  index: "vaultguard-logs",
+  index: "vaultguard-consent-logs",
   node: "http://elasticsearch:9200",
   esVersion: 8,
   serializer: (log: VaultGuardLog): Record<string, any> => ({
