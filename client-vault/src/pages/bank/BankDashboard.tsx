@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Users, AlertTriangle, Bell, Eye, Check, X } from "lucide-react";
+import { Users, AlertTriangle, Bell, Eye, Check, X, RefreshCw } from "lucide-react";
 import { Layout } from "../../components/Layout";
 import { consentApi } from "../../api/consent";
 import { alertsApi } from "../../api/alerts";
@@ -18,6 +18,7 @@ export const BankDashboard: React.FC = () => {
   const [selectedAlertUser, setSelectedAlertUser] = useState<User | null>(null);
   const [userAlerts, setUserAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [userViewTab, setUserViewTab] = useState<
     "consents" | "revokes" | "alerts"
   >("consents");
@@ -138,6 +139,28 @@ export const BankDashboard: React.FC = () => {
       toast.error("Failed to fetch user alerts");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefreshAlerts = async () => {
+    console.log("🔄 BankDashboard - Refreshing alerts data");
+    try {
+      setRefreshing(true);
+      
+      if (selectedAlertUser) {
+        // If viewing specific user alerts, refresh that user's alerts
+        await fetchUserAlerts(selectedAlertUser.id);
+      } else {
+        // If viewing all alert users, refresh the users list
+        await fetchAlertUsers();
+      }
+      
+      toast.success("Alerts refreshed successfully");
+    } catch (error) {
+      console.error("❌ BankDashboard - Failed to refresh alerts:", error);
+      toast.error("Failed to refresh alerts");
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -483,9 +506,19 @@ export const BankDashboard: React.FC = () => {
     <div className="space-y-4">
       {!selectedAlertUser ? (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Users with Alerts
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Users with Alerts
+            </h3>
+            <button
+              onClick={handleRefreshAlerts}
+              disabled={refreshing}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          </div>
           {loading ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -525,15 +558,25 @@ export const BankDashboard: React.FC = () => {
               </h3>
               <p className="text-sm text-gray-600">{selectedAlertUser.email}</p>
             </div>
-            <button
-              onClick={() => {
-                setSelectedAlertUser(null);
-                setUserAlerts([]);
-              }}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-            >
-              Back to Users
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={handleRefreshAlerts}
+                disabled={refreshing}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedAlertUser(null);
+                  setUserAlerts([]);
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Back to Users
+              </button>
+            </div>
           </div>
 
           {loading ? (

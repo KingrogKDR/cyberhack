@@ -14,12 +14,12 @@ export const alertsApi = {
       console.log('🔄 Alerts API - Using headers:', headers);
       
       const response = await axios.get(`${ALERT_BASE_URL}/get-alerts`, { headers });
-      console.log('✅ Alerts API - Get user alerts success:', response.data);
+      console.log('Alerts API - Get user alerts success:', response.data);
       return response.data.alerts;
     } catch (error) {
       console.error('❌ Alerts API - Get user alerts failed:', error);
       if (axios.isAxiosError(error)) {
-        console.error('❌ Alerts API - Get user alerts error details:', {
+        console.error(' Alerts API - Get user alerts error details:', {
           status: error.response?.status,
           data: error.response?.data,
           message: error.message
@@ -31,11 +31,11 @@ export const alertsApi = {
 
   // Bank: Get all users details for alerts 
   getAllUsersForAlerts: async (): Promise<{ userIds: User[] }> => {
-    console.log('🔄 Alerts API - Get all users for alerts');
+    console.log(' Alerts API - Get all users for alerts');
     
     try {
       const headers = authUtils.getAuthHeaders();
-      console.log('🔄 Alerts API - Using headers:', headers);
+      console.log('Alerts API - Using headers:', headers);
       
       const response = await axios.get(`${ALERT_BASE_URL}/get-all-alerts`, { headers });
       console.log('Alerts API - Get all users for alerts success:', response.data);
