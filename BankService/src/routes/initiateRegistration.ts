@@ -19,6 +19,8 @@ router.post("/", async (req, res) => {
     otpStore[email] = otp;
 
     console.log(`Generated OTP for ${email}: ${otp}`);
+    // send the email to user email
+    
     return res.json({message: `Generated OTP for ${email}: ${otp}`});
     // return res.json({ message: "OTP generated and sent"});
   } catch (err) {

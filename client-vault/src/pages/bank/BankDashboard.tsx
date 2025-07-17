@@ -523,6 +523,16 @@ export const BankDashboard: React.FC = () => {
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
+          ) : alertUsers.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="p-3 bg-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Everything is fine, no anomaly for any user
+              </h3>
+              <p className="text-gray-600">All users are operating within normal parameters</p>
+            </div>
           ) : (
             <div className="grid gap-4">
               {alertUsers.map((user) => (
