@@ -4,7 +4,6 @@ import { prisma } from "../prisma";
 
 const router = express.Router();
 
-<<<<<<< HEAD
 interface ConsentCheckResponse {
   allowed: boolean;
 }
@@ -13,18 +12,6 @@ interface TokenizeResponse {
   tokens: Record<string, string>;
 }
 
-||||||| 50479be
-=======
-//definig interfaces here
-interface ConsentResponse {
-  allowed: boolean;
-}
-
-interface TokenizeResponse {
-  tokens: Record<string, string>;
-}
-
->>>>>>> 3bf4717cb9d4d2ff613a0cebf11853cf96f1665f
 /**
  * POST /bank/data
  * {
@@ -61,13 +48,7 @@ router.post("/", async (req, res) => {
 
     for (const field of fields) {
       // Consent check
-<<<<<<< HEAD
       const consentRes = await axios.get<ConsentCheckResponse>(
-||||||| 50479be
-      const consentRes = await axios.get(
-=======
-      const consentRes = await axios.get<ConsentResponse>(
->>>>>>> 3bf4717cb9d4d2ff613a0cebf11853cf96f1665f
         `${process.env.CONSENT_SERVICE_URL}/api/consent/check`,
         {
           params: {
@@ -104,16 +85,8 @@ router.post("/", async (req, res) => {
     }
 
     // Step 3: Tokenize allowed fields
-<<<<<<< HEAD
-    const tokenRes = await axios.post<TokenizeResponse>(
-      `${process.env.VAULT_SERVICE_URL}/api/v1/tokenize`,
-||||||| 50479be
-    const tokenRes = await axios.post(
-      `${process.env.VAULT_SERVICE_URL}/api/v1/tokenize`,
-=======
     const tokenRes = await axios.post<TokenizeResponse>(
       `http://localhost:8963/api/v1/tokenize`,
->>>>>>> 3bf4717cb9d4d2ff613a0cebf11853cf96f1665f
       {
         requestedData,
         userId: user.id,
