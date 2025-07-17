@@ -23,6 +23,7 @@ router.post("/", async (req, res) => {
       return res.status(403).json({ message: response.data.reason });
     }
   } catch (err: any) {
+    console.log(err);
     return res.status(500).json({ message: err?.response?.data?.message || "Verification failed" });
   }
 });

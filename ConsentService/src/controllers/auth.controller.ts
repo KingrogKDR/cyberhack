@@ -4,8 +4,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../prisma/client";
 // @ts-ignore
 import logger from "../utils/logger";
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.JWT_SECRET as string || "DEzrWh1vo6MJ6JTtvlFr0lujcKj5ISDn2thqUAv2zgZap56ZgC4SnHmeNh3MoSYR";
 
 // POST /auth/register
 export const registerHandler = async (
@@ -62,7 +61,7 @@ export const loginHandler = async (
 ): Promise<any> => {
   try {
     const { email, password } = req.body;
-
+    // console.log(req.body);
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -95,6 +94,8 @@ export const loginHandler = async (
       },
     });
   } catch (error) {
+        // console.log(error);
+
     logger.error("Error logging in user:", error);
     res.status(500).json({ message: "Login failed", error });
   }
