@@ -8,7 +8,7 @@ import cors from 'cors';
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:3001',
   credentials: true, // if you're using cookies or authorization headers
 }));
 app.use(express.json());
@@ -16,7 +16,11 @@ app.use("/fintech/register", registerRoutes);
 app.use("/fintech/verify-otp", verifyOtpRoutes);
 app.use("/fintech/data",dataRoute);
 
-const PORT = process.env.BANK_SERVICE_PORT || 3001;
+app.get("/health-check", (req, res) => {
+  res.json({ message: "Fintech service is healthy" });
+});
+
+const PORT = process.env.FINTECH_SERVICE_PORT;
 app.listen(PORT, () => {
-  console.log(`Fintech service running on port ${PORT}`);
+  console.log(`🏧 Fintech service running on port ${PORT}`);
 });

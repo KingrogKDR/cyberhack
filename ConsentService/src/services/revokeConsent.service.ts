@@ -36,3 +36,33 @@ export const getRevokeRequestWithConsent = async (
     include: { consent: true },
   });
 };
+
+export const getPendingRevokeRequestsForUser = async (userId: string) => {
+  return prisma.consentRevokeRequest.findMany({
+    where: {
+      userId,
+      status: "pending",
+    },
+    include: {
+      consent: true,
+    },
+  });
+};
+
+export const getAllPendingRevokeRequests = async () => {
+  return prisma.consentRevokeRequest.findMany({
+    where: {
+      status: "pending",
+    },
+    include: {
+      consent: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+};

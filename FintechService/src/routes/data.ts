@@ -1,7 +1,10 @@
 import express from "express";
 import axios from "axios";
-import { BANK_SERVICE_URL } from "../config";
+// import { BANK_SERVICE_URL } from "../config";
+import dotenv from "dotenv";
+dotenv.config();
 
+const BANK_SERVICE_URL = process.env.BANK_SERVICE_URL
 
 const router = express.Router();
 const APP_ID="budget-app"
@@ -33,7 +36,7 @@ router.post("/", async (req, res) => {
     }
 
     // Step 2: Detokenize all tokens in a single request
-    const detokenRes = await axios.post("http://localhost:8963/api/v1/detokenize", {
+    const detokenRes = await axios.post("http://tokenizer:8963/api/v1/detokenize", {
       tokens: tokenizedFields,
       appId:APP_ID,
     });

@@ -39,6 +39,32 @@ router.post("/", async (req, res) => {
         .json({ status: "rejected", reason: "User not found in bank" });
     }
 
+    const existingConsent = await prisma.consent.findFirst({
+      where: {
+        userId: user.id,
+        appId,
+        revoked: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // console.log(new Date(existingConsent!.expiresAt) > new Date());
+    if (existingConsent !== null) {
+      const expiresAt = new Date(existingConsent.expiresAt);
+      const now = new Date();
+
+      if (expiresAt > now) {
+        delete otpStore[email];
+        return res.json({
+          status: "success",
+          message: "Active consent already exists",
+          allowedFields: existingConsent.dataFields,
+        });
+      }
+    }
+
     const template = consentTemplates[appId];
     if (!template) {
       return res
@@ -51,7 +77,7 @@ router.post("/", async (req, res) => {
     // policy check
     for (const field of template.dataFields) {
       const policyRes = await axios.post<PolicyResponse>(
-        `http://localhost:8181/v1/data/data_access/allow`,
+        `http://policy-service:8181/v1/data/data_access/allow`,
         {
           input: { appId, field, purpose: template.purpose },
         }
@@ -68,7 +94,7 @@ router.post("/", async (req, res) => {
         .json({ status: "rejected", reason: "Policy denied all fields" });
     }
 
-    await axios.post(`http://localhost:4000/api/consent`, {
+    await axios.post(`http://consent-service:4000/api/consent`, {
       userId: user.id,
       appId,
       dataFields: allowedFields,

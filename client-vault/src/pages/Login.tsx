@@ -124,7 +124,7 @@ export const Login: React.FC = () => {
     console.log('🔄 Register - Attempting registration with:', { ...registerForm, password: '[HIDDEN]' });
     try {
       setIsLoading(true);
-      const response = await authApi.register(registerForm);
+       await authApi.register(registerForm);
       
       console.log('✅ Register - Registration successful');
       toast.success('Registration successful! Please login.');
@@ -322,7 +322,7 @@ export const Login: React.FC = () => {
           )}
 
           <div className="mt-6">
-            <button
+            {/* <button
               onClick={() => {
                 setIsRegister(!isRegister);
                 setErrors({});
@@ -330,7 +330,7 @@ export const Login: React.FC = () => {
               className="w-full text-center text-sm text-blue-600 hover:text-blue-500"
             >
               {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

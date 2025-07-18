@@ -3,6 +3,8 @@ import { AuthenticatedRequest } from "../middleware/auth.middleware";
 import { revokeConsent } from "../services/consent.service";
 import {
   createRevokeRequest,
+  getAllPendingRevokeRequests,
+  getPendingRevokeRequestsForUser,
   getRevokeRequestWithConsent,
   updateRevokeRequestStatus,
 } from "../services/revokeConsent.service";
@@ -70,5 +72,36 @@ export const handleBankRevokeStatusHandler = async (
   } catch (error) {
     logger.error("Error updating revoke request status: " + error);
     res.status(500).json({ message: "Failed to update revoke request status" });
+  }
+};
+
+export const getPendingRevokeRequestsForUserHandler = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.params.userId!;
+    
+    const pendingRequests = await getPendingRevokeRequestsForUser(userId);
+
+    res.status(200).json({ pendingRequests });
+  } catch (error) {
+    logger.error("Error fetching user pending revoke requests: " + error);
+    res.status(500).json({ message: "Failed to fetch user revoke requests" });
+  }
+};
+
+
+export const getAllPendingRevokeRequestsHandler = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const pendingRequests = await getAllPendingRevokeRequests();
+
+    res.status(200).json({ pendingRequests });
+  } catch (error) {
+    logger.error("Error fetching all pending revoke requests: " + error);
+    res.status(500).json({ message: "Failed to fetch revoke requests" });
   }
 };
