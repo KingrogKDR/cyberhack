@@ -1,0 +1,47 @@
+import pino, { Logger } from "pino";
+import pinoElasticsearch, {
+  Options as PinoElasticsearchOptions,
+} from "pino-elasticsearch";
+
+interface VaultGuardLog {
+  startup?: boolean;
+  [key: string]: any;
+}
+
+const { ELASTIC_URL, ELASTIC_API_KEY } = process.env;
+
+if (!ELASTIC_URL || !ELASTIC_API_KEY) {
+  throw new Error("Missing ELASTIC_URL or ELASTIC_API_KEY in env");
+}
+
+const streamToElastic = pinoElasticsearch({
+  index: "vaultguard-token-logs",
+  node: ELASTIC_URL,
+  auth: {
+    apiKey: ELASTIC_API_KEY,
+  },
+  tls: {
+    rejectUnauthorized: false, // only use this if you encounter SSL issues
+  },
+  serializer: (log: VaultGuardLog): Record<string, any> => ({
+    "@timestamp": new Date().toISOString(),
+    ...log,
+  }),
+  serverMode: true,
+} as PinoElasticsearchOptions);
+
+streamToElastic.on("error", (error: any) => {
+  console.error("Elastic log error:", error?.message || error);
+  if (error?.meta?.body?.error) {
+    console.error(
+      "Meta error:",
+      JSON.stringify(error.meta.body.error, null, 2)
+    );
+  }
+});
+
+const logger: Logger = pino({ level: "info" }, streamToElastic);
+
+logger.info({ startup: true }, "VaultGuard booted");
+
+export default logger;
